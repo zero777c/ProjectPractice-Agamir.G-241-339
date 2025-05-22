@@ -16,7 +16,7 @@
 ### 1. Базовая часть задания
 
 1. **Настройка Git и репозитория:**
-   - Создайте личный или групповой репозиторий на [GitHub](https://github.com/) или [GitVerse](https://gitverse.ru/) на основе предоставленного [шаблона](https://github.com/mospol/practice-2025-1).
+   - Создайте личный или групповой репозиторий на [GitHub](https://github.com/) или [GitVerse](https://gitverse.ru/) на основе предоставленного [шаблона]([https://github.com/mospol/practice-2025-1](https://github.com/zero777c/ProjectPracticeWebsiteAboutAgamirAndChatBotInTelegram)).
    - Освойте базовые команды Git: клонирование, коммит, пуш и создание веток.
    - Регулярно фиксируйте изменения с осмысленными сообщениями к коммитам.
    - **Ожидаемое время:** 5 часов.
