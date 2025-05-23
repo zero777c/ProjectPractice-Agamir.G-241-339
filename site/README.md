@@ -2,4 +2,4 @@
 
 Код для сайта [Code](hdvhdsvhjdsv)
 
-Видео находится в папке [Video](ffjfgdfkgh)
+Видео находится в папке [Video](https://github.com/zero777c/ProjectPractice-Agamir.G-241-339/blob/main/site/Video)
