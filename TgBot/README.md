@@ -2,4 +2,4 @@
 
 Ссылка на бота.
 
-код находится в этой папке [Code](djfdjdgkdjf)
+код находится в этой папке [Code](https://github.com/zero777c/ProjectPractice-Agamir.G-241-339/blob/main/TgBot/Code)
