@@ -11,9 +11,9 @@
 Задание размещено в файле [Задание](https://github.com/zero777c/start/blob/main/Задание).
 
 ## Вариативная часть задания
-ссылка на [Бота](djfhfjhjfhjdh)
-
 Цель задания - создать "Бота" в телеграм.
+
+ссылка на [Бота](djfhfjhjfhjdh)
 
 https://www.freecodecamp.org/news/how-to-create-a-telegram-bot-using-python/
 
