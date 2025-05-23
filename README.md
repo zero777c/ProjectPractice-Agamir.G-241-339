@@ -13,7 +13,7 @@
 ## Вариативная часть задания
 Цель задания — создать на python «бота» в «Телеграме», для симуляции профессии.
 
-ссылка на [Бота](djfhfjhjfhjdh)
+ссылка на [Бота](djfhfjhjfhjdh) деп
 
 https://www.freecodecamp.org/news/how-to-create-a-telegram-bot-using-python/
 
