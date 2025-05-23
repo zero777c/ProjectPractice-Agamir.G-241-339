@@ -8,7 +8,7 @@
 
 ## Задание
 
-Задание размещено в файле [Задание](https://github.com/zero777c/start/blob/main/Задание).
+Задание размещено в файле [task](https://github.com/zero777c/ProjectPractice-Agamir.G-241-339/blob/main/task/README.md).
 
 ## Вариативная часть задания
 Цель задания — создать на python «бота» в «Телеграме», для симуляции профессии.
