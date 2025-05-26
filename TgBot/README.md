@@ -114,6 +114,10 @@ bash
 echo "TELEGRAM_TOKEN=ваш_токен" > .env
 python bot.py
 ## 4. Визуализация (3+ иллюстрации)
+![Снимок экрана 2025-05-27 021647](https://github.com/user-attachments/assets/d6a9ce7c-5b7c-44e8-b326-7a895113b8ba)
+
+![Снимок экрана 2025-05-27 021641](https://github.com/user-attachments/assets/1902b499-b98d-44e4-ab8c-336633917984)
+
 Схема архитектуры бота
 Architecture
 Описание: Бот использует Telegram API, хранит данные в SQLite и проверяет напоминания каждую минуту.
@@ -127,9 +131,6 @@ Bot Example
 Diagram
 Code
 ## 5. Дополнения и улучшения (творческий пункт)
-![Снимок экрана 2025-05-27 021647](https://github.com/user-attachments/assets/d6a9ce7c-5b7c-44e8-b326-7a895113b8ba)
-
-![Снимок экрана 2025-05-27 021641](https://github.com/user-attachments/assets/1902b499-b98d-44e4-ab8c-336633917984)
 
 Поддержка нескольких напоминаний у одного пользователя.
 
