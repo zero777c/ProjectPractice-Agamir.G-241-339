@@ -1,1 +1,218 @@
+import asyncio
+import re
+from aiogram import Bot, Dispatcher, types, Router, F
+from aiogram.enums import ParseMode
+from aiogram.filters import Command
+from datetime import datetime, timedelta
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.types import ReplyKeyboardRemove
 
+API_TOKEN = '8134559498:AAEer20huQX3RMS2CcLvXmTwllxsHwAG3S4'
+bot = Bot(token=API_TOKEN)
+dp = Dispatcher()
+router = Router()
+
+# Хранилище данных о пользователях
+user_data = {}
+reminders = {}
+
+
+# Состояния
+class ReminderStates:
+    WAITING_TEXT = 1
+    WAITING_TIME = 2
+
+
+# Парсинг русского времени
+def parse_russian_time(text):
+    text = text.lower().strip()
+
+    # Одноразовое в конкретное время
+    if ':' in text:
+        time_match = re.search(r'(\d{1,2}):(\d{2})', text)
+        if time_match:
+            hours, minutes = map(int, time_match.groups())
+            now = datetime.now()
+            reminder_time = now.replace(hour=hours, minute=minutes, second=0)
+            if reminder_time < now:
+                reminder_time += timedelta(days=1)
+            return reminder_time, 'одноразовое'
+
+    # Разбор интервалов
+    patterns = {
+        'мин': 'm',
+        'час': 'h',
+        'день': 'd'
+    }
+
+    for ru, en in patterns.items():
+        if ru in text:
+            num = int(re.search(r'\d+', text).group())
+            if en == 'm':
+                return timedelta(minutes=num), f"каждые {num} мин"
+            elif en == 'h':
+                return timedelta(hours=num), f"каждые {num} час"
+            elif en == 'd':
+                return timedelta(days=num), f"каждые {num} дней"
+
+    # Разбор "через X время"
+    if 'через' in text:
+        num = int(re.search(r'\d+', text).group())
+        if 'мин' in text:
+            return timedelta(minutes=num), f"через {num} мин"
+        elif 'час' in text:
+            return timedelta(hours=num), f"через {num} час"
+        elif 'день' in text or 'дня' in text or 'дней' in text:
+            return timedelta(days=num), f"через {num} дней"
+
+    return None, None
+
+
+@router.message(Command("start"))
+async def send_welcome(message: types.Message):
+    await message.reply(
+        "⏰ Бот-напоминалка\n"
+        "• /new - Новое напоминание\n"
+        "• /list - Мои напоминания\n"
+        "• /del - Удалить",
+        reply_markup=ReplyKeyboardRemove()
+    )
+
+
+@router.message(Command("new"))
+async def new_reminder(message: types.Message):
+    user_id = message.from_user.id
+    user_data[user_id] = {'state': ReminderStates.WAITING_TEXT}
+    await message.reply(
+        "📝 Напишите текст напоминания:",
+        reply_markup=ReplyKeyboardRemove()
+    )
+
+
+@router.message(F.text,
+                lambda message: user_data.get(message.from_user.id, {}).get('state') == ReminderStates.WAITING_TEXT)
+async def get_reminder_text(message: types.Message):
+    user_id = message.from_user.id
+    user_data[user_id] = {
+        'state': ReminderStates.WAITING_TIME,
+        'text': message.text
+    }
+    await message.reply(
+        "⏱ Укажите время:\n"
+        "Примеры:\n"
+        "• 14:30 (одноразовое)\n"
+        "• через 2 часа\n"
+        "• каждые 3 дня",
+        reply_markup=ReplyKeyboardRemove()
+    )
+
+
+@router.message(F.text,
+                lambda message: user_data.get(message.from_user.id, {}).get('state') == ReminderStates.WAITING_TIME)
+async def get_reminder_time(message: types.Message):
+    user_id = message.from_user.id
+    text = user_data[user_id]['text']
+    time_text = message.text
+
+    delta, freq = parse_russian_time(time_text)
+    if not delta:
+        await message.reply(
+            "Не понял время?!. Примеры:\n"
+            "• 14:30\n"
+            "• через 2 часа\n"
+            "• каждые 3 дня\n"
+            "Попробуйте еще раз:"
+        )
+        return
+
+    if user_id not in reminders:
+        reminders[user_id] = []
+
+    is_one_time = freq == 'одноразовое'
+    reminder = {
+        'text': text,
+        'delta': delta,
+        'freq': freq,
+        'next_time': datetime.now() + delta if is_one_time else datetime.now()
+    }
+
+    reminders[user_id].append(reminder)
+    del user_data[user_id]
+
+    await message.reply(
+        f"✅ Напоминание установлено!\n"
+        f"📝 Текст: {text}\n"
+        f"⏰ Когда: {freq}",
+        reply_markup=ReplyKeyboardRemove()
+    )
+
+    if len(reminders[user_id]) == 1:
+        asyncio.create_task(check_reminders(user_id))
+
+
+@router.message(Command("list"))
+async def show_reminders(message: types.Message):
+    user_id = message.from_user.id
+    if not reminders.get(user_id):
+        await message.reply("Нет активных напоминаний")
+        return
+
+    res = ["Ваши напоминания:"]
+    for i, r in enumerate(reminders[user_id], 1):
+        res.append(f"{i}. {r['text']} ({r['freq']})")
+
+    await message.reply("\n".join(res))
+
+
+@router.message(Command("del"))
+async def delete_reminder(message: types.Message):
+    user_id = message.from_user.id
+    if not reminders.get(user_id):
+        await message.reply("Нет напоминаний для удаления")
+        return
+
+    kb = InlineKeyboardBuilder()
+    for i, r in enumerate(reminders[user_id]):
+        kb.button(text=f"{i + 1}. {r['text'][:15]}...", callback_data=f"del_{i}")
+    kb.adjust(2)
+
+    await message.reply("Выберите для удаления:", reply_markup=kb.as_markup())
+
+
+@router.callback_query(lambda c: c.data.startswith('del_'))
+async def process_delete(callback: types.CallbackQuery):
+    user_id = callback.from_user.id
+    idx = int(callback.data.split('_')[1])
+
+    try:
+        deleted = reminders[user_id].pop(idx)
+        await callback.answer(f"Удалено: {deleted['text']}")
+        await callback.message.delete()
+    except:
+        await callback.answer("Ошибка удаления")
+
+
+async def check_reminders(user_id):
+    while user_id in reminders and reminders[user_id]:
+        now = datetime.now()
+        for r in reminders[user_id][:]:
+            if now >= r['next_time']:
+                await bot.send_message(user_id, f"⏰ Напоминание: {r['text']}")
+
+                if r['freq'] == 'одноразовое':
+                    reminders[user_id].remove(r)
+                else:
+                    r['next_time'] = now + r['delta']
+
+        await asyncio.sleep(30)
+
+
+dp.include_router(router)
+
+
+async def main():
+    await dp.start_polling(bot)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
