@@ -126,17 +126,14 @@ Bot Example
 
 Diagram
 Code
-
-
-
-
-
-
-
 ## 5. Дополнения и улучшения (творческий пункт)
-Добавить БД SQLite для хранения напоминаний между перезапусками.
+![Снимок экрана 2025-05-27 021647](https://github.com/user-attachments/assets/d6a9ce7c-5b7c-44e8-b326-7a895113b8ba)
+
+![Снимок экрана 2025-05-27 021641](https://github.com/user-attachments/assets/1902b499-b98d-44e4-ab8c-336633917984)
 
 Поддержка нескольких напоминаний у одного пользователя.
+
+Добавить БД SQLite для хранения напоминаний между перезапусками.
 
 Web-интерфейс (Flask) для управления напоминаниями.
 
@@ -153,9 +150,6 @@ def init_db():
     cursor.execute("CREATE TABLE IF NOT EXISTS reminders (chat_id INTEGER, time TEXT, text TEXT)")
     conn.commit()
     conn.close()
-## 6. Видеопрезентация
-
-
 ## Итоговый отчёт
     Хронология работы:
 
