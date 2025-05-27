@@ -6,7 +6,7 @@
 
 код находится в этой папке [Code](https://github.com/zero777c/ProjectPractice-Agamir.G-241-339/blob/main/TgBot/Code)
 
-# Практическая реализация Telegram-бота для напоминаний на Python
+# Тех. карта Telegram-бота для напоминаний на Python
 ## 1. Выбор стека технологий
     Язык программирования: Python 3.9+
     
